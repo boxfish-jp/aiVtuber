@@ -13,6 +13,8 @@ import sounddevice as sd
 
 app = Flask(__name__)
 
+blackList = []
+
 
 @app.route("/")
 def main():
@@ -33,8 +35,10 @@ def main():
         with open(path, "wb") as f:
             f.write(audio)
         fs, data = wav.read(path)
-        sd.play(data, fs, device=4)
         os.remove(path)
+        if key in blackList:
+            return res
+        sd.play(data, fs, device=4)
         return res
         # return Response(audio, mimetype="audio/wav")
     else:
@@ -50,11 +54,16 @@ def test2():
 @app.route("/interupt")
 def interupt():
     key = request.args.get("key")
+    blackList.append(key)
     if not key:
         return "No key"
     path = f"./wav/{key}.wav"
     if os.path.exists(path):
+        print("Remove file")
         os.remove(path)
+    else:
+        sd.stop()
+    print("Interupted")
     return "OK"
 
 
