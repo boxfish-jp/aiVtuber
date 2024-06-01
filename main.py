@@ -1,6 +1,8 @@
 from flask import Flask, Response, request
 import urllib.parse as urlparse
 import os
+import time
+import requests
 from lib.sendChatBison import sendChatBison
 
 # from lib.sendGemini import sendGemini
@@ -14,6 +16,7 @@ import sounddevice as sd
 app = Flask(__name__)
 
 blackList = []
+speakingStatus = False
 
 
 @app.route("/")
@@ -32,17 +35,34 @@ def main():
     audio = text_2_wav(res)
     path = f"./wav/{key}.wav"
     if audio:
+        while speakingStatus:
+            print("Wait")
+            time.sleep(0.1)
         with open(path, "wb") as f:
             f.write(audio)
         fs, data = wav.read(path)
         os.remove(path)
         if key in blackList:
+            print("Interupted")
             return res
+        requests.get("http://192.168.68.118:5173/message?message=" + res)
+        print("play")
         sd.play(data, fs, device=4)
         return res
         # return Response(audio, mimetype="audio/wav")
     else:
         return "Error"
+
+
+@app.route("/speaking")
+def speaking():
+    global speakingStatus
+    status = request.args.get("speaking")
+    if status == "true":
+        speakingStatus = True
+    else:
+        speakingStatus = False
+    return "OK"
 
 
 @app.route("/test2")
