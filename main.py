@@ -16,6 +16,7 @@ import sounddevice as sd
 app = Flask(__name__)
 
 blackList = []
+audioQueue = []
 speakingStatus = False
 
 
@@ -40,14 +41,10 @@ def main():
             time.sleep(0.1)
         with open(path, "wb") as f:
             f.write(audio)
-        fs, data = wav.read(path)
-        os.remove(path)
-        if key in blackList:
-            print("Interupted")
-            return res
-        requests.get("http://192.168.68.118:5173/message?message=" + res)
-        print("play")
-        sd.play(data, fs, device=4)
+        audioQueue.append([path, param, key, res])
+        while len(audioQueue) > 0:
+            playAudio()
+            time.sleep(0.5)
         return res
         # return Response(audio, mimetype="audio/wav")
     else:
@@ -85,6 +82,20 @@ def interupt():
         sd.stop()
     print("Interupted")
     return "OK"
+
+
+def playAudio():
+    global audioQueue
+    if len(audioQueue) == 0:
+        return
+    path, param, key, res = audioQueue.pop(0)
+    fs, data = wav.read(path)
+    os.remove(path)
+    if key in blackList:
+        print("Interupted")
+    requests.get("http://192.168.68.118:5173/message?message=" + res)
+    print("play")
+    sd.play(data, fs, device=4)
 
 
 if __name__ == "__main__":
