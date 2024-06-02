@@ -24,13 +24,16 @@ speakingStatus = False
 def main():
     param = request.args.get("text")
     key = request.args.get("key")
+    who = request.args.get("who")
     if not param:
         return "No text"
     if not key:
         return "No key"
+    if not who:
+        who = "viewer"
     param = urlparse.unquote(param)
     print("GET: ", param)
-    res = sendChatBison(param)
+    res = sendChatBison(param, who)
     # res = sendGemini(param)
     print(res)
     audio = text_2_wav(res)
