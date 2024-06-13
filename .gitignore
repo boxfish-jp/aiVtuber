@@ -2,4 +2,5 @@
 **/__pycache__
 .env
 output.wav
+/wav
 **key.json
