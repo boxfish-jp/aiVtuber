@@ -15,7 +15,7 @@ class LLM:
 
     __model = ChatVertexAI(model="gemini-pro")
     __parser = StrOutputParser()
-    __systemTemplate = "あなたはαちゃんという女の子です。現在、ふぐおという人と。もう一人の人の3人で話しています。必ずため口で話すこと。あなたはポジティブな人間なので、人を傷つけるようなことは言わないこと。一人称は「私」にすること。今回は、{name}"
+    __systemTemplate = "あなたはαちゃんという女の子です。現在、ふぐおという人と。もう一人の人の3人で話しています。\n 出力結果は以下のことを守ること。・つらつらと長めの発言はしない。・必ずため口で話すこと。・あなたはポジティブな人間なので、人を傷つけるようなことは言わないこと。・一人称は「私」にすること。\n 今回は、"
 
     def __speaker(self, who: str):
         if who == "fugu":
@@ -38,14 +38,18 @@ class LLM:
     def __trimStore(self):
         self.__store["1"].messages = self.__trimArray(self.__store["1"].messages)
 
-    def send(self, text: str, who: str):
-        prompt = ChatPromptTemplate.from_messages(
+    def createPrompt(self, who: str):
+        system = self.__systemTemplate + self.__speaker(who)
+        return ChatPromptTemplate.from_messages(
             [
-                ("system", self.__systemTemplate),
+                ("system", system),
                 MessagesPlaceholder(variable_name="history"),
                 ("user", "{input}"),
             ]
         )
+
+    def send(self, text: str, who: str):
+        prompt = self.createPrompt(who)
 
         runnable = prompt | self.__model | self.__parser
 
