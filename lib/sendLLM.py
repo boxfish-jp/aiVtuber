@@ -1,12 +1,17 @@
 import os
 from langchain_google_vertexai import ChatVertexAI
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key.json"
 
 
 class LLM:
+
+    __MAXChatStore = 10
+    __store = {}
 
     __model = ChatVertexAI(model="gemini-pro")
     __parser = StrOutputParser()
@@ -20,13 +25,41 @@ class LLM:
         else:
             return "話題を振ってください。"
 
+    def __getSessionHistory(self, sessionId: str):
+        if sessionId not in self.__store:
+            self.__store[sessionId] = ChatMessageHistory()
+        return self.__store[sessionId]
+
+    def __trimArray(self, array):
+        if len(array) > self.__MAXChatStore:
+            array = array[2:]
+        return array
+
+    def __trimStore(self):
+        self.__store["1"].messages = self.__trimArray(self.__store["1"].messages)
+
     def send(self, text: str, who: str):
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.__systemTemplate),
+                MessagesPlaceholder(variable_name="history"),
                 ("user", "{input}"),
             ]
         )
 
-        chain = prompt | self.__model | self.__parser
-        return chain.invoke({"name": self.__speaker(who), "input": text})
+        runnable = prompt | self.__model | self.__parser
+
+        runnableWithHistory = RunnableWithMessageHistory(
+            runnable,
+            self.__getSessionHistory,
+            input_messages_key="input",
+            history_messages_key="history",
+        )
+        result = runnableWithHistory.invoke(
+            {"name": self.__speaker(who), "input": text},
+            config={"configurable": {"session_id": "1"}},
+        )
+
+        self.__trimStore()
+
+        return result

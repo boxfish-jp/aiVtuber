@@ -3,17 +3,15 @@ import urllib.parse as urlparse
 import os
 import time
 import requests
-from lib.sendChatBison import sendChatBison
+from lib.sendLLM import LLM
 
-# from lib.sendGemini import sendGemini
 from lib.voiceBox import text_2_wav
 
 import scipy.io.wavfile as wav
 import sounddevice as sd
 
-# from lib.sendVoiceBoxApi import sendVoiceBoxApi
-
 app = Flask(__name__)
+llm = LLM()
 
 blackList = []
 audioQueue = []
@@ -33,8 +31,7 @@ def main():
         who = "viewer"
     param = urlparse.unquote(param)
     print("GET: ", param)
-    res = sendChatBison(param, who)
-    # res = sendGemini(param)
+    res = llm.send(param, who)
     print(res)
     audio = text_2_wav(res)
     path = f"./wav/{key}.wav"

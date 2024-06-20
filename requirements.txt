@@ -8,6 +8,7 @@ certifi==2024.6.2
 cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
+dataclasses-json==0.6.7
 docstring_parser==0.16
 Flask==3.0.3
 frozenlist==1.4.1
@@ -30,13 +31,16 @@ itsdangerous==2.2.0
 Jinja2==3.1.4
 jsonpatch==1.33
 jsonpointer==2.4
-langchain==0.2.3
-langchain-core==0.2.5
+langchain==0.2.5
+langchain-community==0.2.5
+langchain-core==0.2.9
 langchain-google-vertexai==1.0.5
 langchain-text-splitters==0.2.1
 langsmith==0.1.75
 MarkupSafe==2.1.5
+marshmallow==3.21.3
 multidict==6.0.5
+mypy-extensions==1.0.0
 numpy==1.26.4
 orjson==3.10.3
 packaging==23.2
@@ -57,6 +61,7 @@ six==1.16.0
 sounddevice==0.4.7
 SQLAlchemy==2.0.30
 tenacity==8.3.0
+typing-inspect==0.9.0
 typing_extensions==4.12.2
 urllib3==2.2.1
 Werkzeug==3.0.3
