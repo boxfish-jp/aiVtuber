@@ -3,12 +3,12 @@ import urllib.parse as urlparse
 import os
 import time
 import requests
-from lib.sendLLM import LLM
-
-from lib.voiceBox import text_2_wav
-
+import asyncio
 import scipy.io.wavfile as wav
 import sounddevice as sd
+
+from lib.sendLLM import LLM
+from lib.voiceBox import text_2_wav
 
 app = Flask(__name__)
 llm = LLM()
@@ -32,24 +32,31 @@ def main():
     param = urlparse.unquote(param)
     print("GET: ", param)
     res = llm.send(param, who)
+    res.replace("\\n", "")
     print("result:", res)
-    audio = text_2_wav(res)
-    path = f"./wav/{key}.wav"
-    if audio:
+    sentences = split_text(res)
+    print(sentences)
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    tasks = []
+    for i, sentence in enumerate(sentences):
+        addQueue(param, key, res, str(i))
+    for i, sentence in enumerate(sentences):
+        tasks.append(loop.create_task(makeAudio(sentence, key, str(i))))
+
+    loop.run_until_complete(gatherTasks(tasks))
+
+    while len(audioQueue) > 0:
         while speakingStatus:
-            print("Wait")
+            # print("Wait")
             time.sleep(0.1)
-        with open(path, "wb") as f:
-            f.write(audio)
-        audioQueue.append([path, param, key, res])
-        while len(audioQueue) > 0:
-            playAudio()
-            time.sleep(0.5)
-        print("Done")
-        return res
-        # return Response(audio, mimetype="audio/wav")
-    else:
-        return "Error"
+
+        playAudio()
+        time.sleep(0.5)
+    print("Done")
+    return "Completed"
 
 
 @app.route("/speaking")
@@ -85,19 +92,48 @@ def interupt():
     return "OK"
 
 
+async def gatherTasks(tasks):
+    await asyncio.gather(*tasks)
+
+
+def split_text(text: str):
+    sentences = text.split("。")
+    return sentences
+
+
+def addQueue(param, key, res, num):
+    global audioQueue
+    path = f"./wav/{key + num}.wav"
+    audioQueue.append([path, param, key, res])
+
+
+async def makeAudio(sentence, key, num):
+    global audioQueue
+    audio = await text_2_wav(sentence)
+    path = f"./wav/{key + num}.wav"
+    if audio:
+        with open(path, "wb") as f:
+            f.write(audio)
+        return True
+    else:
+        return False
+
+
 def playAudio():
     global audioQueue
     if len(audioQueue) == 0:
         return
     path, param, key, res = audioQueue.pop(0)
+    while not os.path.exists(path):
+        time.sleep(0.1)
     fs, data = wav.read(path)
     os.remove(path)
     if key in blackList:
         print("Interupted")
     requests.get("http://192.168.68.118:2525?message=" + res)
     print("play")
-    sd.play(data, fs, device=4)
+    sd.play(data, fs, device=4, blocking=True)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8888, threaded=True, host="192.168.68.110")
+    app.run(debug=True, port=8888, threaded=False, host="192.168.68.110")
