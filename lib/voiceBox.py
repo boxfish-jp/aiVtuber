@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def text_2_wav(text, speaker_id=2, max_retry=20, filename="audio.wav"):
+def text_2_wav(text, speaker_id=48, max_retry=20, filename="audio.wav"):
     host = "192.168.68.118"
     port = 50021
     params = (

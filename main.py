@@ -32,7 +32,7 @@ def main():
     param = urlparse.unquote(param)
     print("GET: ", param)
     res = llm.send(param, who)
-    print(res)
+    print("result:", res)
     audio = text_2_wav(res)
     path = f"./wav/{key}.wav"
     if audio:
@@ -45,6 +45,7 @@ def main():
         while len(audioQueue) > 0:
             playAudio()
             time.sleep(0.5)
+        print("Done")
         return res
         # return Response(audio, mimetype="audio/wav")
     else:
@@ -93,7 +94,7 @@ def playAudio():
     os.remove(path)
     if key in blackList:
         print("Interupted")
-    requests.get("http://192.168.68.118:5173/message?message=" + res)
+    requests.get("http://192.168.68.118:2525?message=" + res)
     print("play")
     sd.play(data, fs, device=4)
 
