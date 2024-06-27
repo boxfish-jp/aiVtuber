@@ -98,6 +98,7 @@ async def gatherTasks(tasks):
 
 
 def split_text(text: str):
+    text = text.replace("\n", "")
     sentences = re.split(r"(?<=。|？)", text)
     # 空の文字列を除去する
     sentences = [sentence for sentence in sentences if sentence]
