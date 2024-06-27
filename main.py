@@ -6,6 +6,7 @@ import requests
 import asyncio
 import scipy.io.wavfile as wav
 import sounddevice as sd
+import re
 
 from lib.sendLLM import LLM
 from lib.voiceBox import text_2_wav
@@ -97,7 +98,9 @@ async def gatherTasks(tasks):
 
 
 def split_text(text: str):
-    sentences = text.split("。")
+    sentences = re.split(r"(?<=。|？)", text)
+    # 空の文字列を除去する
+    sentences = [sentence for sentence in sentences if sentence]
     return sentences
 
 
