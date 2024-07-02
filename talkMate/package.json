@@ -1,0 +1,16 @@
+{
+  "name": "hub",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.11.4",
+    "@prisma/client": "5.16.1",
+    "hono": "^4.4.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "prisma": "^5.16.1",
+    "tsx": "^4.7.1"
+  }
+}
