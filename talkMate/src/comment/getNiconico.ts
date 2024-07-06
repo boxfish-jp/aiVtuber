@@ -169,6 +169,7 @@ export const getNiconico = async (ChannelId: string) => {
       const comment = JSON.parse(evt.data).chat;
       //コメントを出力
       if (comment) {
+        console.log("niconico:", comment.content);
         createChat("viewer", comment.content);
       }
     }

@@ -11,6 +11,7 @@ export const getTwtich = (channelId: string) => {
   client.on("message", (channel, tags, message, self) => {
     if (self) return;
 
+    console.log("twitch:", message);
     createChat("viewer", message);
   });
 };
