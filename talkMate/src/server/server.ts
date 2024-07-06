@@ -12,7 +12,7 @@ export const startServer = () => {
       return c.text("Please provide a who", 400);
     }
     const response = await sendAPI(who);
-    return c.text(response || "OK");
+    return c.text(response);
   });
 
   console.log(

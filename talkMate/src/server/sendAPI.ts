@@ -16,7 +16,7 @@ const makeURL = (chat: Chat): string => {
 export const sendAPI = async (who: string) => {
   const chat = await getLatestChat(who);
   if (!chat) {
-    return;
+    return `No chat (${who}) found`;
   }
   const url = makeURL(chat);
   try {
@@ -25,7 +25,9 @@ export const sendAPI = async (who: string) => {
       console.log(`Failed to send message to AI: ${response.statusText}`);
       return response.text();
     }
+    return response.text();
   } catch (e) {
     console.log(e);
+    return String(e);
   }
 };
