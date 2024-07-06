@@ -1,0 +1,21 @@
+{
+  "name": "hub",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.11.4",
+    "@prisma/client": "5.16.1",
+    "cheerio": "^1.0.0-rc.12",
+    "hono": "^4.4.10",
+    "tmi.js": "^1.8.5",
+    "ws": "^8.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "@types/tmi.js": "^1.8.6",
+    "@types/ws": "^8.5.10",
+    "prisma": "^5.16.1",
+    "tsx": "^4.7.1"
+  }
+}

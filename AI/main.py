@@ -7,6 +7,7 @@ import asyncio
 import scipy.io.wavfile as wav
 import sounddevice as sd
 import re
+from endpoint import AIport, AiIp, subTitleIp, subTitlePort
 
 from lib.sendLLM import LLM
 from lib.voiceBox import text_2_wav
@@ -134,10 +135,10 @@ def playAudio():
     os.remove(path)
     if key in blackList:
         print("Interupted")
-    requests.get("http://192.168.68.118:2525?message=" + res)
+    requests.get(f"http://{subTitleIp}:{subTitlePort}?message={res}")
     print("play")
     sd.play(data, fs, device=4, blocking=True)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8888, threaded=False, host="192.168.68.110")
+    app.run(debug=True, port=AIport, threaded=False, host=AiIp)
