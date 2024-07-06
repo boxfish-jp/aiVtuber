@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { sendAPI } from "./sendAPI";
+import { talkMateEndpoint } from "../endpoint";
 
 export const startServer = () => {
   const app = new Hono();
@@ -14,11 +15,13 @@ export const startServer = () => {
     return c.text(response || "OK");
   });
 
-  const port = 2529;
-  console.log(`Server is running on  localhost:${port}`);
+  console.log(
+    `Server is running on  localhost:${Number(talkMateEndpoint.port)}`
+  );
 
   serve({
     fetch: app.fetch,
-    port,
+    hostname: talkMateEndpoint.ip,
+    port: Number(talkMateEndpoint.port),
   });
 };
