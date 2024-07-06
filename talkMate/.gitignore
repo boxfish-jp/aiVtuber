@@ -31,4 +31,3 @@ lerna-debug.log*
 
 *.db
 migrations
-endpoint.ts
