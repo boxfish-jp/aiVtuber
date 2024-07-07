@@ -18,6 +18,10 @@ endpoint = (
     + str(endpointJson["talkMate"]["port"])
 )
 
+aiEndpoint = (
+    "http://" + endpointJson["AI"]["ip"] + ":" + str(endpointJson["AI"]["port"])
+)
+
 
 def sendRequest(endpoint: str, path: str, param: dict):
     try:
@@ -42,12 +46,21 @@ def sendVoiceComment() -> None:
     sendRequest(endpoint, "", param)
 
 
+def ClearChatHistory() -> None:
+    sendRequest(aiEndpoint, "/clear", {})
+
+
 if __name__ == "__main__":
     while True:
         eventlist = pygame.event.get()
         if len(eventlist) > 0:
             if eventlist[0].type == pygame.JOYBUTTONDOWN:
                 if eventlist[0].button == 1:
+                    print("Send Viewer Comment")
                     sendViewerComment()
                 elif eventlist[0].button == 2:
+                    print("Send Voice Comment")
                     sendVoiceComment()
+                elif eventlist[0].button == 3:
+                    print("Clear Chat History")
+                    ClearChatHistory()

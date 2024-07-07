@@ -16,6 +16,11 @@ class _LLM(ABC):
     def send(self, text: str, who: str) -> str:
         pass
 
+    @abstractmethod
+    def clearChatStore(self) -> None:
+        pass
+
+
 class LLMController(_LLM):
 
     _MAXChatStore = config["prompt"]["memory"]["max"]
@@ -87,3 +92,7 @@ class LLMController(_LLM):
             self._trimStore()
 
         return result
+
+    def clearChatStore(self):
+        self._store = {}
+        return None

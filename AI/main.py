@@ -78,6 +78,12 @@ def test2():
     return "OK"
 
 
+@app.route("/clear")
+def clear():
+    llm.clearChatStore()
+    return "Cleared"
+
+
 @app.route("/interupt")
 def interupt():
     key = request.args.get("key")
@@ -135,7 +141,7 @@ def playAudio():
     os.remove(path)
     if key in blackList:
         print("Interupted")
-    requests.get(f"http://{subTitleIp}:{subTitlePort}?message={res}")
+    # requests.get(f"http://{subTitleIp}:{subTitlePort}?message={res}")
     print("play")
     sd.play(data, fs, device=4, blocking=True)
 
