@@ -30,4 +30,5 @@ lerna-debug.log*
 .DS_Store
 
 *.db
+*.db-journal
 migrations
