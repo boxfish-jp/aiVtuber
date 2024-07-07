@@ -13,6 +13,6 @@ datasource db {
 model Chat {
   id        Int   @id @default(autoincrement())
   who       String   
-  sended    Boolean   @default(false)
+  clear    Boolean   @default(false)
   message   String
 }
