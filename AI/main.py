@@ -9,11 +9,11 @@ import sounddevice as sd
 import re
 from endpoint import AIport, AiIp, subTitleIp, subTitlePort
 
-from lib.sendLLM import LLM
+from lib.sendLLM import LLMController
 from lib.voiceBox import text_2_wav
 
 app = Flask(__name__)
-llm = LLM()
+llm = LLMController()
 
 blackList = []
 audioQueue = []
@@ -58,7 +58,7 @@ def main():
         playAudio()
         time.sleep(0.5)
     print("Done")
-    return "Completed"
+    return res
 
 
 @app.route("/speaking")

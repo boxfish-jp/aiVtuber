@@ -1,11 +1,13 @@
-import requests
+from lib.loadAIConfig import getAiConfig
 import json
 import aiohttp
 import aiohttp
 import json
 
+config = getAiConfig()
 
-async def text_2_wav(text, speaker_id=48, max_retry=20, filename="audio.wav"):
+
+async def text_2_wav(text, speaker_id=config["voice"]["speakerId"]):
     host = "192.168.68.118"
     port = 50021
     params = (
