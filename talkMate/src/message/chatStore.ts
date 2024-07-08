@@ -1,8 +1,10 @@
 import { Chat, PrismaClient } from ".prisma/client";
 
 interface ChatStore {
-  getLatestChat(who: string): Promise<Chat | null>;
-  makeAsSended(chatId: number): Promise<Chat>;
+  getLatestChat(): Promise<Chat | null>;
+  getLatestClearedChat(): Promise<Chat | null>;
+  getSessionChat(sessionRangeStartId: number): Promise<Chat[]>;
+  makeAsCleared(chatId: number): Promise<Chat>;
   createChat(who: string, message: string): Promise<void>;
 }
 
@@ -13,17 +15,29 @@ class PrismaChatStore implements ChatStore {
     this.prisma = new PrismaClient();
   }
 
-  async getLatestChat(who: string): Promise<Chat | null> {
+  async getLatestChat(): Promise<Chat | null> {
     return await this.prisma.chat.findFirst({
-      where: { who },
       orderBy: { id: "desc" },
     });
   }
 
-  async makeAsSended(chatId: number): Promise<Chat> {
+  async getLatestClearedChat(): Promise<Chat | null> {
+    return await this.prisma.chat.findFirst({
+      where: { clear: true },
+      orderBy: { id: "desc" },
+    });
+  }
+
+  async getSessionChat(sessionRangeStartId: number): Promise<Chat[]> {
+    return await this.prisma.chat.findMany({
+      where: { id: { gte: sessionRangeStartId } },
+    });
+  }
+
+  async makeAsCleared(chatId: number): Promise<Chat> {
     return await this.prisma.chat.update({
       where: { id: chatId },
-      data: { sended: true },
+      data: { clear: true },
     });
   }
 

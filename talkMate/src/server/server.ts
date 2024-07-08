@@ -1,18 +1,21 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { sendAPI } from "./sendAPI";
+import { createChat, makeLatestAsCleared } from "../message/opeMess";
 import { talkMateEndpoint } from "../endpoint";
 
 export const startServer = () => {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const who = c.req.query("who");
-    if (!who) {
-      return c.text("Please provide a who", 400);
-    }
-    const response = await sendAPI(who);
+    const response = await sendAPI();
+    await createChat("ai", response);
     return c.text(response);
+  });
+
+  app.get("/clear", async (c) => {
+    const result = await makeLatestAsCleared();
+    return c.text(`cleared: ${result}`);
   });
 
   console.log(
