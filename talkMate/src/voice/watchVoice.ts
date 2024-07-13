@@ -17,8 +17,9 @@ export const watchVoice = () => {
   socket.onmessage = (evt) => {
     if (typeof evt.data === "string") {
       if (!evt.data.startsWith("{")) {
-        console.log(evt.data.replace("\n", ""));
-        createChat("huguo", evt.data);
+        const voiceText = evt.data.replace("\r\n", "");
+        console.log(voiceText);
+        createChat("huguo", voiceText);
       }
     }
   };
