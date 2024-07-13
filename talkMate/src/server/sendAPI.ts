@@ -11,7 +11,7 @@ export const sendAPI = async () => {
       "Content-Type": "application/json",
     },
     method: "POST",
-    body: JSON.stringify(chatHistory),
+    body: JSON.stringify({ data: chatHistory }),
   };
   try {
     const response = await fetch(AiEndpoint, params);
