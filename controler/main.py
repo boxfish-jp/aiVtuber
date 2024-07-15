@@ -18,36 +18,30 @@ endpoint = (
     + str(endpointJson["talkMate"]["port"])
 )
 
-aiEndpoint = (
-    "http://" + endpointJson["AI"]["ip"] + ":" + str(endpointJson["AI"]["port"])
-)
+
+def sendRequest(endpoint: str, path: str, param: dict = None):
+    if param is None:
+        try:
+            response = requests.get(endpoint + path)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            print(e)
+            pass
+    else:
+        try:
+            response = requests.get(endpoint + path + "?" + urlencode(param))
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            print(e)
+            pass
 
 
-def sendRequest(endpoint: str, path: str, param: dict):
-    try:
-        response = requests.get(endpoint + path + "?" + urlencode(param))
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print(e)
-        pass
-
-
-def sendViewerComment() -> None:
-    param = {
-        "who": "viewer",
-    }
-    sendRequest(endpoint, "", param)
-
-
-def sendVoiceComment() -> None:
-    param = {
-        "who": "huguo",
-    }
-    sendRequest(endpoint, "", param)
+def talkToAI() -> None:
+    sendRequest(endpoint, "")
 
 
 def ClearChatHistory() -> None:
-    sendRequest(aiEndpoint, "/clear", {})
+    sendRequest(endpoint, "/clear")
 
 
 if __name__ == "__main__":
@@ -56,11 +50,8 @@ if __name__ == "__main__":
         if len(eventlist) > 0:
             if eventlist[0].type == pygame.JOYBUTTONDOWN:
                 if eventlist[0].button == 1:
-                    print("Send Viewer Comment")
-                    sendViewerComment()
-                elif eventlist[0].button == 2:
-                    print("Send Voice Comment")
-                    sendVoiceComment()
-                elif eventlist[0].button == 3:
                     print("Clear Chat History")
                     ClearChatHistory()
+                elif eventlist[0].button == 2:
+                    print("Talk to AI")
+                    talkToAI()

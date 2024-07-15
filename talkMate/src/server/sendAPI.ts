@@ -1,26 +1,20 @@
-import { Chat } from ".prisma/client";
-import { getLatestChat } from "../message/opeMess";
+import { getChatHistory } from "../message/opeMess";
 import { AiEndpoint } from "../endpoint";
 
-const makeURL = (chat: Chat): string => {
-  const endpoint = new URL(AiEndpoint);
-  const key = new Date().getTime();
-  const params = new URLSearchParams();
-  params.append("text", encodeURIComponent(chat.message));
-  params.append("key", key.toString());
-  params.append("who", chat.who);
-  endpoint.search = params.toString();
-  return endpoint.href;
-};
-
-export const sendAPI = async (who: string) => {
-  const chat = await getLatestChat(who);
-  if (!chat) {
-    return `No chat (${who}) found`;
+export const sendAPI = async () => {
+  const chatHistory = await getChatHistory();
+  if (!chatHistory) {
+    return `No chatHistory found`;
   }
-  const url = makeURL(chat);
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ data: chatHistory }),
+  };
   try {
-    const response = await fetch(url);
+    const response = await fetch(AiEndpoint, params);
     if (!response.ok) {
       console.log(`Failed to send message to AI: ${response.statusText}`);
       return response.text();
