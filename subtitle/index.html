@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subtitle</title>
+  </head>
+  <body>
+    <p id="Subtitle"></p>
+    <script>
+      const endpointUrl = `http://192.168.68.110:8888/ws`;
+      const socket = new WebSocket(endpointUrl);
+      let connected = false;
+      socket.addEventListener("message", (event) => {
+        changeSubtitle(event.data);
+      });
+
+      socket.addEventListener("open", () => {
+        connected = true;
+      });
+
+      socket.addEventListener("close", () => {
+        connected = false;
+      });
+
+      const changeSubtitle = (subtitle) => {
+        const subtitleElement = document.getElementById("Subtitle");
+        subtitleElement.textContent = subtitle;
+      };
+
+      setInterval(() => {
+        if (!connected) {
+          socket.close();
+          location.reload();
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>

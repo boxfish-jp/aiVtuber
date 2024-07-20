@@ -2,11 +2,12 @@ import { sleep } from "./sleep";
 import { Audio, voiceVoxAudio } from "./TTS/voicevox";
 
 export interface Action {
-  speak(): Promise<void>;
+  speak(callback?: (sendMsg: string) => void): Promise<void>;
 }
 
 type sentensesType = {
   order: number;
+  text: string;
   audio: Audio;
 };
 
@@ -24,6 +25,7 @@ export class AIAction implements Action {
     for (const [i, thinkOutputSplit] of thinkOutputArray.entries()) {
       this.sentenses.push({
         order: i,
+        text: thinkOutputSplit,
         audio: new voiceVoxAudio(thinkOutputSplit),
       });
     }
@@ -33,13 +35,16 @@ export class AIAction implements Action {
     return this.thinkOutput.split(/(?<=。|？)/);
   }
 
-  async speak(): Promise<void> {
+  async speak(callback: (sendMsg: string) => void): Promise<void> {
     this.initSentenses();
     for (const sentenses of this.sentenses) {
       await sleep(200);
       sentenses.audio.create();
     }
     for (const sentenses of this.sentenses) {
+      if (callback) {
+        callback(sentenses.text);
+      }
       await sentenses.audio.play();
     }
   }
