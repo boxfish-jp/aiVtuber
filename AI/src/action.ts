@@ -2,7 +2,7 @@ import { sleep } from "./sleep";
 import { Audio, voiceVoxAudio } from "./TTS/voicevox";
 
 export interface Action {
-  speak(callback?: (sendMsg: string) => void): Promise<void>;
+  speak(callback?: (msg: string) => void): Promise<void>;
 }
 
 type sentensesType = {
@@ -35,7 +35,7 @@ export class AIAction implements Action {
     return this.thinkOutput.split(/(?<=。|？)/);
   }
 
-  async speak(callback: (sendMsg: string) => void): Promise<void> {
+  async speak(callback: (msg: string) => void): Promise<void> {
     this.initSentenses();
     for (const sentenses of this.sentenses) {
       await sleep(200);

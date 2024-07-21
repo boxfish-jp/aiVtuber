@@ -7,20 +7,27 @@
   </head>
   <body>
     <p id="Subtitle"></p>
+    <script
+      src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+      integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+      crossorigin="anonymous"
+    ></script>
     <script>
-      const endpointUrl = `http://192.168.68.110:8888/ws`;
-      const socket = new WebSocket(endpointUrl);
-      let connected = false;
-      socket.addEventListener("message", (event) => {
-        changeSubtitle(event.data);
-      });
+      const endpointUrl = `http://192.168.68.110:8888`;
+      const socket = io(endpointUrl, { path: "/ws" });
 
-      socket.addEventListener("open", () => {
+      let connected = false;
+
+      socket.on("connect", () => {
         connected = true;
       });
 
-      socket.addEventListener("close", () => {
+      socket.on("disconnect", () => {
         connected = false;
+      });
+
+      socket.on("message", (data) => {
+        changeSubtitle(data);
       });
 
       const changeSubtitle = (subtitle) => {
@@ -30,10 +37,9 @@
 
       setInterval(() => {
         if (!connected) {
-          socket.close();
           location.reload();
         }
-      }, 1000);
+      }, 3000);
     </script>
   </body>
 </html>

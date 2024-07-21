@@ -1,14 +1,12 @@
 import { serve } from "@hono/node-server";
-import { createNodeWebSocket } from "@hono/node-ws";
+import { Server } from "socket.io"; // Import the 'Socket' type
+import { Server as HTTPServer } from "http";
 import { Hono } from "hono";
 import { think, chatHistoryType } from "./LLM/llm";
 import { Action, AIAction } from "./action";
 import endpoint from "../../endpoint.json";
 
 const app = new Hono();
-let wsClient: any = undefined;
-
-const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
 app.post("/", async (c) => {
   const { data } = await c.req.json<{ data: chatHistoryType }>();
@@ -16,33 +14,14 @@ app.post("/", async (c) => {
   const llmResponse = await think(data);
   console.log(llmResponse);
   const action: Action = new AIAction(llmResponse);
-  if (wsClient) {
-    await action.speak(wsClient.send);
-  } else {
-    await action.speak();
-  }
-  wsClient.send(" ");
+  await action.speak(sendMsg);
+  sendMsg(" ");
   return c.text(llmResponse);
 });
 
-app.get(
-  "/ws",
-  upgradeWebSocket((c) => {
-    return {
-      onOpen(evt, ws) {
-        console.log("Connection opened");
-        if (wsClient) {
-          wsClient.close();
-        }
-        wsClient = ws;
-      },
-      onClose(evt) {
-        console.log("Connection closed");
-        wsClient = undefined;
-      },
-    };
-  })
-);
+const sendMsg = (msg: string) => {
+  ioServer.emit("message", msg);
+};
 
 const port = Number(endpoint.AI.port);
 const hostname = endpoint.AI.ip;
@@ -54,4 +33,19 @@ const server = serve({
   hostname,
 });
 
-injectWebSocket(server);
+const ioServer = new Server(server as HTTPServer, {
+  path: "/ws",
+  serveClient: false,
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+ioServer.on("error", (err) => {
+  console.log(err);
+});
+
+ioServer.on("connect", (socket) => {
+  console.log("Connection opened");
+});

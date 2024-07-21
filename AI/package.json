@@ -10,6 +10,7 @@
     "@langchain/google-vertexai": "^0.0.19",
     "hono": "^4.4.12",
     "langchain": "^0.2.9",
+    "socket.io": "^4.7.5",
     "sound-play": "^1.1.0"
   },
   "devDependencies": {
