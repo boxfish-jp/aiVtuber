@@ -1,9 +1,8 @@
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import {
-  HumanMessage,
-  SystemMessage,
-  AIMessage,
-} from "@langchain/core/messages";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
+  ChatPromptTemplate,
+  FewShotChatMessagePromptTemplate,
+} from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import AIConfig from "../../AIConfig.json";
 import { ChatVertexAI } from "@langchain/google-vertexai";
@@ -19,7 +18,6 @@ const createMessages = (
   if (chatHistory.length <= 1) {
     return [];
   }
-  console.log("chatHistory:", chatHistory);
   const onlyHistory = chatHistory.slice(0, -1);
   let messages: (HumanMessage | AIMessage)[] = [];
   for (const chat of onlyHistory) {
@@ -43,10 +41,21 @@ const createInput = (chatHistory: chatHistoryType): string => {
 export const think = async (chatHistory: chatHistoryType): Promise<string> => {
   const messages = createMessages(chatHistory);
   const input = createInput(chatHistory);
-  console.log("input:", input);
+  const examplePrompt = ChatPromptTemplate.fromMessages([
+    ["human", "{input}"],
+    ["ai", "{output}"],
+  ]);
+  const examples = AIConfig.prompt.prompt.example;
+  const fewShotPrompt = new FewShotChatMessagePromptTemplate({
+    examplePrompt: examplePrompt,
+    examples: examples,
+    inputVariables: [],
+  });
+  const fewShotPromptInvoke = await fewShotPrompt.invoke({});
   const prompt = ChatPromptTemplate.fromMessages([
     ["system", AIConfig.prompt.prompt.systemPrompt],
     ["placeholder", `{chat_history}`],
+    ChatPromptTemplate.fromMessages(fewShotPromptInvoke.toChatMessages()),
     ["human", `{input}`],
   ]);
 
@@ -70,7 +79,8 @@ export const think = async (chatHistory: chatHistoryType): Promise<string> => {
       });
       return response;
     } catch (e) {
-      await sleep(300);
+      console.log("error:", e);
+      await sleep(1000);
     }
   }
   return "思考が停止しました";
