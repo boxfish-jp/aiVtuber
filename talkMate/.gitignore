@@ -32,3 +32,5 @@ lerna-debug.log*
 *.db
 *.db-journal
 migrations
+
+public/
