@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.11.4",
+    "@kikurage/nicolive-api": "^0.0.4",
     "@prisma/client": "5.16.1",
     "cheerio": "^1.0.0-rc.12",
     "hono": "^4.4.10",
