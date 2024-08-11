@@ -5,7 +5,7 @@ interface ChatStore {
   getLatestClearedChat(): Promise<Chat | null>;
   getSessionChat(sessionRangeStartId: number): Promise<Chat[]>;
   makeAsCleared(chatId: number): Promise<Chat>;
-  createChat(who: string, message: string): Promise<void>;
+  createChat(who: string, message: string): Promise<Chat>;
 }
 
 class PrismaChatStore implements ChatStore {
@@ -41,8 +41,8 @@ class PrismaChatStore implements ChatStore {
     });
   }
 
-  async createChat(who: string, message: string): Promise<void> {
-    await this.prisma.chat.create({
+  async createChat(who: string, message: string): Promise<Chat> {
+    return await this.prisma.chat.create({
       data: {
         who: who,
         message: message,

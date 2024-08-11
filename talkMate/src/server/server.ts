@@ -4,6 +4,7 @@ import { sendAPI } from "./sendAPI";
 import { createChat, makeLatestAsCleared } from "../message/opeMess";
 import { talkMateEndpoint } from "../endpoint";
 import { serveStatic } from "@hono/node-server/serve-static";
+import { initSocketServer } from "./socketServer";
 
 export const startServer = () => {
   const app = new Hono();
@@ -30,12 +31,14 @@ export const startServer = () => {
   );
 
   console.log(
-    `Server is running on  localhost:${Number(talkMateEndpoint.port)}`
+    `Server is running on  http://localhost:${Number(talkMateEndpoint.port)}`
   );
 
-  serve({
+  const server = serve({
     fetch: app.fetch,
     hostname: talkMateEndpoint.ip,
     port: Number(talkMateEndpoint.port),
   });
+
+  initSocketServer(server);
 };

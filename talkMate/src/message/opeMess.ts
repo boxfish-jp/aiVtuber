@@ -1,5 +1,6 @@
 import { Chat } from ".prisma/client";
 import { getChatStore } from "./chatStore";
+import { broadcast } from "@/server/socketServer";
 
 type chatHistoryType = { human: string; ai: string }[];
 
@@ -54,5 +55,6 @@ export const createChat = async (
   message: string
 ): Promise<void> => {
   const chatStore = getChatStore();
-  await chatStore.createChat(who, message);
+  const result = await chatStore.createChat(who, message);
+  broadcast(JSON.stringify([result]));
 };
