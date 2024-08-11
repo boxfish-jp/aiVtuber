@@ -29,7 +29,9 @@ export const startServer = () => {
   );
 
   console.log(
-    `Server is running on  http://localhost:${Number(talkMateEndpoint.port)}`
+    `webPage is running on  http://${talkMateEndpoint.ip}:${Number(
+      talkMateEndpoint.port
+    )}/index.html`
   );
 
   const server = serve({
