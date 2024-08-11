@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { sendAPI } from "./sendAPI";
-import { createChat, makeLatestAsCleared } from "../message/opeMess";
+import { createChat } from "../message/opeMess";
 import { talkMateEndpoint } from "../endpoint";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { initSocketServer } from "./socketServer";
@@ -10,16 +10,14 @@ export const startServer = () => {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const response = await sendAPI();
+    const chatId = Number(c.req.query("id"));
+    if (!chatId) {
+      return c.text("chatId is required", 400);
+    }
+    const response = await sendAPI(chatId);
     await createChat("ai", response);
     return c.text(response);
   });
-
-  app.get("/clear", async (c) => {
-    const result = await makeLatestAsCleared();
-    return c.text(`cleared: ${result}`);
-  });
-
   app.use(
     "*",
     serveStatic({

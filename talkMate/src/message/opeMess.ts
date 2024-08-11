@@ -29,25 +29,13 @@ const formatChatHistory = (sessionChats: Chat[]): chatHistoryType => {
   return chatHistory;
 };
 
-export const getChatHistory = async (): Promise<chatHistoryType> => {
+export const getChatHistory = async (
+  chatId: number
+): Promise<chatHistoryType> => {
   const chatStore = getChatStore();
-  const latestClearedChat = await chatStore.getLatestClearedChat();
-  if (!latestClearedChat) {
-    return [];
-  }
-  const sessionChats = await chatStore.getSessionChat(latestClearedChat.id);
+  const sessionChats = await chatStore.getSessionChat(chatId);
   const chatHistory = formatChatHistory(sessionChats);
   return chatHistory;
-};
-
-export const makeLatestAsCleared = async (): Promise<String> => {
-  const chatStore = getChatStore();
-  const latestChat = await chatStore.getLatestChat();
-  if (!latestChat) {
-    return "No chat in the database";
-  }
-  const result = await chatStore.makeAsCleared(latestChat.id);
-  return result.message;
 };
 
 export const createChat = async (

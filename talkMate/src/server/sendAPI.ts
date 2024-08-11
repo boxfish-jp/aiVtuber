@@ -1,8 +1,8 @@
 import { getChatHistory } from "../message/opeMess";
 import { AiEndpoint } from "../endpoint";
 
-export const sendAPI = async () => {
-  const chatHistory = await getChatHistory();
+export const sendAPI = async (chatId: number) => {
+  const chatHistory = await getChatHistory(chatId);
   if (!chatHistory) {
     return `No chatHistory found`;
   }
