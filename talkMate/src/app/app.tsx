@@ -2,11 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { Chat } from ".prisma/client";
 import { WatchChat, watchChatFromSocket } from "./lib/watchChat";
 import { ChatTable } from "./table";
+import { fetchTalkMate } from "./lib/fetchTalkMate";
 
 export const App: FC = () => {
   const [chats, setChat] = useState<Chat[]>([]);
-
-  const [elect, setElect] = useState<number>(-1);
   useEffect(() => {
     const watchChat: WatchChat = new watchChatFromSocket((newChats) => {
       setChat(newChats);
@@ -15,7 +14,7 @@ export const App: FC = () => {
 
   return (
     <div>
-      <ChatTable chats={chats} />
+      <ChatTable chats={chats} submitCallback={fetchTalkMate} />
     </div>
   );
 };
