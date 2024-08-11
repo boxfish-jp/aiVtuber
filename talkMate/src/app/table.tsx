@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Chat } from ".prisma/client";
 import { useEffect, useRef } from "react";
@@ -24,7 +25,7 @@ export const ChatTable = ({ chats }: { chats: Chat[] }) => {
     resolver: zodResolver(formSchema),
   });
 
-  const listEndRef = useRef<HTMLDivElement>(null);
+  const listEndRef = useRef<HTMLTableRowElement>(null);
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
@@ -35,46 +36,56 @@ export const ChatTable = ({ chats }: { chats: Chat[] }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onsubmit)}>
-        <FormField
-          control={form.control}
-          name="chatId"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value?.toString()}
-                >
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>選択</TableHead>
-                        <TableHead>id</TableHead>
-                        <TableHead>who</TableHead>
-                        <TableHead>内容</TableHead>
-                      </TableRow>
-                    </TableHeader>
+      <form
+        onSubmit={form.handleSubmit(onsubmit)}
+        className="flex flex-col gap-6 items-center"
+      >
+        <div className="self-start mx-0 w-full">
+          <FormField
+            control={form.control}
+            name="chatId"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString()}
+                  >
+                    <ScrollArea className="h-96">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-10">選択</TableHead>
+                            <TableHead className="w-16">id</TableHead>
+                            <TableHead className="w-16">who</TableHead>
+                            <TableHead>内容</TableHead>
+                          </TableRow>
+                        </TableHeader>
 
-                    <TableBody>
-                      {chats.map((chat) => (
-                        <TableRow key={chat.id.toString()}>
-                          <TableCell>
-                            <RadioGroupItem value={chat.id.toString()} />
-                          </TableCell>
-                          <TableCell>{chat.id}</TableCell>
-                          <TableCell>{chat.who}</TableCell>
-                          <TableCell>{chat.message}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </RadioGroup>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Button type="submit">送信</Button>
+                        <TableBody>
+                          {chats.map((chat) => (
+                            <TableRow key={chat.id.toString()}>
+                              <TableCell>
+                                <RadioGroupItem value={chat.id.toString()} />
+                              </TableCell>
+                              <TableCell>{chat.id}</TableCell>
+                              <TableCell>{chat.who}</TableCell>
+                              <TableCell>{chat.message}</TableCell>
+                            </TableRow>
+                          ))}
+                          <TableRow ref={listEndRef} />
+                        </TableBody>
+                      </Table>
+                    </ScrollArea>
+                  </RadioGroup>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button type="submit" className="w-fit">
+          送信
+        </Button>
       </form>
     </Form>
   );
