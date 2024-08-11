@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 import { Chat } from ".prisma/client";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const formSchema = z.object({
-  type: z.string(),
+  chatId: z.string(),
 });
 
 export const ChatTable = ({ chats }: { chats: Chat[] }) => {
@@ -37,7 +38,7 @@ export const ChatTable = ({ chats }: { chats: Chat[] }) => {
       <form onSubmit={form.handleSubmit(onsubmit)}>
         <FormField
           control={form.control}
-          name="type"
+          name="chatId"
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -73,6 +74,7 @@ export const ChatTable = ({ chats }: { chats: Chat[] }) => {
             </FormItem>
           )}
         />
+        <Button type="submit">送信</Button>
       </form>
     </Form>
   );
