@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
-    outDir: "./public",
+    outDir: "dist",
   },
   plugins: [react()],
   resolve: {
@@ -12,4 +12,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  publicDir: "public",
 });
