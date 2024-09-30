@@ -548,10 +548,10 @@ gtoken@^6.1.0:
     google-p12-pem "^4.0.0"
     jws "^4.0.0"
 
-hono@^4.4.12:
-  version "4.4.12"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-4.4.12.tgz#dbde2d474cd996016ee53f779125efc7c1534879"
-  integrity sha512-Lx4Vwbws0IqFfXIVYychxUW0A4EE+7dn/jsjVeM34OXSA2Xs45MkDDP14Mzznp7LlDemUNHQG2uv2N5jQld0hA==
+hono@^4.6.3:
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.6.3.tgz#78a58a24ea79e00071cff59596486e91e1c1a9d0"
+  integrity sha512-0LeEuBNFeSHGqZ9sNVVgZjB1V5fmhkBSB0hZrpqStSMLOWgfLy0dHOvrjbJh0H2khsjet6rbHfWTHY0kpYThKQ==
 
 https-proxy-agent@^5.0.0:
   version "5.0.1"
