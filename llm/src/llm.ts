@@ -1,3 +1,4 @@
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import {
   ChatPromptTemplate,
   FewShotChatMessagePromptTemplate,
@@ -6,12 +7,32 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatVertexAI } from "@langchain/google-vertexai-web";
 import { chatHistoryType, examplePromptType } from "./types";
 
+const createMessages = (
+  chatHistory: chatHistoryType
+): (HumanMessage | AIMessage)[] => {
+  if (chatHistory.length <= 1) {
+    return [];
+  }
+  const onlyHistory = chatHistory.slice(0, -1);
+  let messages: (HumanMessage | AIMessage)[] = [];
+  for (const chat of onlyHistory) {
+    if (chat.human) {
+      messages.push(new HumanMessage(chat.human));
+    }
+    if (chat.AI) {
+      messages.push(new AIMessage(chat.AI));
+    }
+  }
+  return messages;
+};
+
 export const llm = async (
   system: string,
   examples: examplePromptType,
   chatHistory: chatHistoryType,
   input: string
 ) => {
+  const messages = createMessages(chatHistory);
   const examplePrompt = ChatPromptTemplate.fromMessages([
     ["human", "{input}"],
     ["ai", "{output}"],
@@ -46,7 +67,7 @@ export const llm = async (
   const chain = prompt.pipe(model).pipe(parser);
 
   return await chain.stream({
-    chat_history: chatHistory,
+    chat_history: messages,
     input: input,
   });
 };
