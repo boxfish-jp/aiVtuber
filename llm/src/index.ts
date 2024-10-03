@@ -16,7 +16,7 @@ const zodSchema = z.object({
   input: z.string(),
 });
 
-const route = app.get("/", zValidator("json", zodSchema), async (c) => {
+const route = app.post("/", zValidator("json", zodSchema), async (c) => {
   return stream(c, async (stream) => {
     const { GOOGLE_WEB_CREDENTIALS } = env<{ GOOGLE_WEB_CREDENTIALS: string }>(
       c
