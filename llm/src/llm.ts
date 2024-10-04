@@ -66,8 +66,5 @@ export const llm = async (
   const parser = new StringOutputParser();
   const chain = prompt.pipe(model).pipe(parser);
 
-  return await chain.stream({
-    chat_history: messages,
-    input: input,
-  });
+  return chain.invoke({ chat_history: messages, input: input });
 };
