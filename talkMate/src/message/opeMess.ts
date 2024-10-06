@@ -2,7 +2,7 @@ import { Chat } from ".prisma/client";
 import { getChatStore } from "./chatStore";
 import { broadcast } from "@/server/socketServer";
 
-type chatHistoryType = { human: string; ai: string }[];
+type chatHistoryType = { human: string; AI: string }[];
 
 const formatChatHistory = (sessionChats: Chat[]): chatHistoryType => {
   let chatHistory: chatHistoryType = [];
@@ -16,14 +16,14 @@ const formatChatHistory = (sessionChats: Chat[]): chatHistoryType => {
         tmpHuman += `視聴者「${chat.message}」`;
         break;
       case "ai":
-        chatHistory.push({ human: tmpHuman, ai: chat.message });
+        chatHistory.push({ human: tmpHuman, AI: chat.message });
         tmpHuman = "";
         break;
       default:
         throw new Error(`Invalid who:${chat.who}`);
     }
     if (i === sessionChats.length - 1) {
-      chatHistory.push({ human: tmpHuman, ai: "" });
+      chatHistory.push({ human: tmpHuman, AI: "" });
     }
   }
   return chatHistory;
