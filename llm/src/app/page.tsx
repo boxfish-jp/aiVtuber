@@ -4,6 +4,7 @@ import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { ChatBubble } from "@/components/ui/chat/chat-bubble";
 import { ChatBubbleAvatar } from "@/components/ui/chat/chat-bubble";
 import { ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
+import { ModeToggle } from "@/components/theme-toggle-button";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { Button } from "@/components/ui/button";
 import { CornerDownLeft } from "lucide-react";
@@ -14,6 +15,7 @@ export default function Home() {
 
   return (
     <>
+      <ModeToggle />
       <ChatMessageList>
         {messages.length > 0
           ? messages.map((m) =>
