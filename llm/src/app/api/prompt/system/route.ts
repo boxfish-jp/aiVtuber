@@ -3,13 +3,13 @@ import { getLatestData } from "@/lib/getLatestData";
 import { parseSystemPrompt } from "@/lib/parseSystemPrompt";
 
 export async function POST(req: Request) {
-	const { version, prompt, publish } = await req.json();
+	const { prompt, publish } = await req.json();
 	const oldPromptData = await getLatestData(1);
 	const oldPromptVersion = oldPromptData.version;
 	if (publish) {
 		await createData(oldPromptVersion + 1, 1, { system: prompt });
 	} else {
-		await createData(version, 1, { system: prompt });
+		await createData(oldPromptVersion, 1, { system: prompt });
 	}
 	return new Response("OK", { status: 200 });
 }
