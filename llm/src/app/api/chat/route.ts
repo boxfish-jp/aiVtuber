@@ -55,8 +55,6 @@ export async function POST(req: Request) {
 
   const fewShotPromptInvoke = await fewShotPrompt.invoke({});
 
-  console.log(fewShotPromptInvoke.toChatMessages());
-
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",

@@ -17,6 +17,5 @@ export async function POST(req: Request) {
 export async function GET() {
   const promptData = await getLatestData(1);
   const systemPrompt = parseSystemPrompt(promptData);
-  console.log(systemPrompt);
   return new Response(systemPrompt);
 }
