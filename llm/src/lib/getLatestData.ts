@@ -1,19 +1,18 @@
-import { Prompt } from "@prisma/client";
+import type { Prompt } from "@prisma/client";
 import { prismaClient } from "./getPrisma";
 
 export async function getLatestData(type: number): Promise<Prompt> {
-  const getLatestData = await prismaClient.prompt.findFirst({
-    where: {
-      type: type,
-    },
-    orderBy: {
-      id: "desc",
-    },
-  });
+	const getLatestData = await prismaClient.prompt.findFirst({
+		where: {
+			type: type,
+		},
+		orderBy: {
+			id: "desc",
+		},
+	});
 
-  if (getLatestData) {
-    return getLatestData;
-  } else {
-    throw new Error("No data found");
-  }
+	if (getLatestData) {
+		return getLatestData;
+	}
+	throw new Error("No data found");
 }
