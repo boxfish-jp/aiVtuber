@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
 
 const formSchema = z.object({
-	prompt: z.string().min(1, "system prompt is required"),
+	system: z.string().min(1, "system prompt is required"),
 });
 
 export const SystemPromptForm = () => {
@@ -22,7 +22,7 @@ export const SystemPromptForm = () => {
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		const response = await fetch("/api/prompt/system", {
 			method: "POST",
-			body: JSON.stringify({ prompt: data.prompt }),
+			body: JSON.stringify({ prompt: data.system }),
 		});
 
 		if (response.ok) {
@@ -43,7 +43,7 @@ export const SystemPromptForm = () => {
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<FormField
 						control={form.control}
-						name="prompt"
+						name="system"
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
