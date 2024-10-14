@@ -7,9 +7,9 @@ export async function POST(req: Request) {
 	const oldPromptData = await getLatestData(2);
 	const oldPromptVersion = oldPromptData.version;
 	if (publish) {
-		await createData(oldPromptVersion + 1, 2, { system: prompt });
+		await createData(oldPromptVersion + 1, 2, { examples: prompt });
 	} else {
-		await createData(oldPromptVersion, 2, { system: prompt });
+		await createData(oldPromptVersion, 2, { examples : prompt });
 	}
 	return new Response("OK", { status: 200 });
 }
