@@ -14,5 +14,10 @@ export async function getLatestData(type: number): Promise<Prompt> {
 	if (getLatestData) {
 		return getLatestData;
 	}
-	throw new Error("No data found");
+	return {
+		id: -1,
+		type: type,
+		version: 0,
+		prompt: "error: no data found",
+	};
 }
