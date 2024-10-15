@@ -1,13 +1,23 @@
 "use client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./ui/button";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
 
+const fetchSystemPrompt = async (
+	setFunction: (name: "system", data: string) => void,
+) => {
+	const response = await fetch("/api/prompt/system");
+	console.log(response.body);
+	const data = await response.text();
+	console.log(data);
+	setFunction("system", data);
+};
 const formSchema = z.object({
 	system: z.string().min(1, "system prompt is required"),
 });
@@ -16,8 +26,16 @@ export const SystemPromptForm = () => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	});
+	const [loading, setloading] = useState(true);
 
 	const { toast } = useToast();
+
+	useEffect(() => {
+		if (loading) {
+			fetchSystemPrompt(form.setValue);
+		}
+		setloading(false);
+	}, [loading, form]);
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		const response = await fetch("/api/prompt/system", {
