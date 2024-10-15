@@ -1,13 +1,23 @@
 "use client";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./ui/button";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
 import { Toaster } from "./ui/toaster";
-import { useState } from "react";
+
+const fetchExamplePrompt = async (
+	setFunction: (example: { input: string; output: string }) => void,
+) => {
+	const response = await fetch("/api/prompt/example");
+	const data = (await response.json()) as { input: string; output: string }[];
+	for (const example of data) {
+		setFunction(example);
+	}
+};
 
 const formSchema = z.object({
 	examples: z.array(
@@ -29,6 +39,15 @@ export const ExamplePromptForm = () => {
 		control: form.control,
 		name: "examples",
 	});
+	const [loading, setloading] = useState(true);
+
+	useEffect(() => {
+		if (loading) {
+			fetchExamplePrompt(fieldArray.append);
+			fieldArray.remove(0);
+		}
+		setloading(false);
+	}, [loading, fieldArray]);
 
 	const { toast } = useToast();
 
