@@ -32,20 +32,28 @@ export class AIAction implements Action {
   }
 
   split(): string[] {
-    return this.thinkOutput.split(/(?<=。|？)/);
+    return this.thinkOutput.split(/(?<=。|？|、)/);
   }
-
-  async speak(callback: (msg: string) => void): Promise<void> {
-    this.initSentenses();
+  
+  async makeAudio(): Promise<void> {
     for (const sentenses of this.sentenses) {
-      await sleep(200);
       sentenses.audio.create();
+      await sleep(200);
     }
+  }
+  
+  async playAudio(callback: (msg: string) => void): Promise<void> {
     for (const sentenses of this.sentenses) {
       if (callback) {
         callback(sentenses.text);
       }
       await sentenses.audio.play();
     }
+  }
+
+  async speak(callback: (msg: string) => void): Promise<void> {
+    this.initSentenses();
+    this.makeAudio();
+    await this.playAudio(callback);
   }
 }
