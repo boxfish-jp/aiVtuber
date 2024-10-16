@@ -73,14 +73,17 @@ export const ExamplePromptForm = () => {
 	return (
 		<>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
+				<form
+					className="flex flex-col gap-2"
+					onSubmit={form.handleSubmit(onSubmit)}
+				>
 					{fieldArray.fields.map((item, index) => (
-						<div key={item.id}>
+						<div key={item.id} className="flex flex-row items-center gap-4">
 							<FormField
 								control={form.control}
 								name={`examples.${index}.input`}
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex-grow">
 										<FormControl>
 											<Textarea placeholder="Input Prompt" {...field} />
 										</FormControl>
@@ -91,16 +94,18 @@ export const ExamplePromptForm = () => {
 								control={form.control}
 								name={`examples.${index}.output`}
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex-grow">
 										<FormControl>
 											<Textarea placeholder="Output Prompt" {...field} />
 										</FormControl>
 									</FormItem>
 								)}
 							/>
-							<Button type="button" onClick={() => fieldArray.remove(index)}>
-								delete
-							</Button>
+							<div>
+								<Button type="button" onClick={() => fieldArray.remove(index)}>
+									delete
+								</Button>
+							</div>
 						</div>
 					))}
 					<Button
