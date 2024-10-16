@@ -58,14 +58,26 @@ export const SystemPromptForm = () => {
 	return (
 		<>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="flex flex-col gap-2"
+				>
 					<FormField
 						control={form.control}
 						name="system"
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<Textarea placeholder="System Prompt" {...field} />
+									<Textarea
+										className="h-24 min-h-9 overflow-hidden"
+										placeholder="System Prompt"
+										onInput={(e) => {
+											const target = e.target as HTMLTextAreaElement;
+											target.style.height = "0px";
+											target.style.height = `${target.scrollHeight}px`;
+										}}
+										{...field}
+									/>
 								</FormControl>
 							</FormItem>
 						)}
