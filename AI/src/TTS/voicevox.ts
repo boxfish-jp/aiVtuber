@@ -1,9 +1,10 @@
 import { writeFileSync, unlinkSync } from "fs";
-import sound from "sound-play";
 import path from "path";
+import { exec } from "child_process";
 import { sleep } from "../sleep";
 import endpoint from "../../../endpoint.json";
 import AIConfig from "../../AIConfig.json";
+import { decode } from "iconv-lite";
 
 export interface Audio {
   create(): Promise<void>;
@@ -64,12 +65,22 @@ export class voiceVoxAudio implements Audio {
     const fileName = path.join(__dirname, `./${new Date().getTime()}.wav`);
     try {
       const buffer = Buffer.from(audioData);
-      writeFileSync(fileName, buffer);
+      writeFileSync(fileName, new Uint8Array(buffer));
     } catch (e) {
       throw new Error(`Failed to save audio: ${String(e)}`);
     }
     this.filePath = fileName;
     console.log("Audio created: ", this.filePath);
+  }
+
+  async executeCommand(command: string): Promise<void> {
+    await new Promise<void>(resolve => exec(command, {encoding:"buffer"}, (err, stdout, stderr) => {
+        if (err) {
+          console.log(`stderr: ${decode(stderr, "Shift_JIS")}`);
+          return;
+        }
+        resolve();
+      }));
   }
 
   async deleteAudio(): Promise<void> {
@@ -95,7 +106,9 @@ export class voiceVoxAudio implements Audio {
     }
     try {
       console.log("play", this.filePath);
-      await sound.play(this.filePath);
+      const command = `"C:/Program Files/VLC/vlc.exe" --play-and-exit --gain=1.5 "${this.filePath}"`;
+      console.log("command: ", command);
+      await this.executeCommand(command); 
       this.deleteAudio();
     } catch (e) {
       throw new Error(`Failed to play audio: ${String(e)}`);
