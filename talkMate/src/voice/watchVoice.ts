@@ -19,7 +19,7 @@ export const watchVoice = () => {
       if (!evt.data.startsWith("{")) {
         const voiceText = evt.data.replace("\r\n", "");
         console.log(voiceText);
-        createChat("huguo", voiceText);
+        createChat("fuguo", voiceText);
       }
     }
   };

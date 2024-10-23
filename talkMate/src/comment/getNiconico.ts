@@ -18,7 +18,7 @@ export const getNiconico = async (userId: string) => {
       const nusiCome = state.marque?.display?.operatorComment?.content;
       if (nusiCome) {
         console.log("niconico:", nusiCome);
-        createChat("huguo", nusiCome);
+        createChat("fuguo", nusiCome);
       }
     })
     .connect();

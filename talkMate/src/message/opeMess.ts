@@ -9,7 +9,7 @@ const formatChatHistory = (sessionChats: Chat[]): chatHistoryType => {
   let tmpHuman: string = "";
   for (const [i, chat] of sessionChats.entries()) {
     switch (chat.who) {
-      case "huguo":
+      case "fuguo":
         tmpHuman += `ふぐお「${chat.message}」`;
         break;
       case "viewer":
